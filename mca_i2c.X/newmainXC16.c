@@ -11,6 +11,9 @@
 #include <string.h>
 #include <stdio.h>
 
+#define FCY 16000000  // System clock frequency (e.g., 16 MHz)
+#define BAUDRATE 9600 // Desired baud rate
+
 #pragma config FNOSC = FRCPLL     // Primary Oscillator: Fast RC with PLL
 #pragma config POSCMOD = XT          // External Crystal Oscillator mode (XT, HS, or EC mode)
 #pragma config IESO = ON          // Internal/External Oscillator Switchover (optional, for dynamic switching)
@@ -19,17 +22,17 @@
 
 // Function Prototypes
 void initSystem();
-void initI2C_PPS();
+void initI2C1();
 void initUART_PPS();
 void processCommand(char* command);
 void sendToUART(char* message);
 void uartTransmit(uint8_t data);
 uint8_t uartReceive();
-void i2cStart();
-void i2cStop();
-void i2cWrite(uint8_t data);
-uint8_t i2cReadAck();
-uint8_t i2cReadNack();
+void i2c1Start();
+void i2c1Stop();
+void i2c1Write(uint8_t data);
+uint8_t i2c1ReadAck();
+uint8_t i2c1ReadNack();
 void mcp4725WriteDAC(uint16_t value);
 uint16_t mcp4725ReadDAC();
 void writeDACValue(uint16_t value);
@@ -94,19 +97,12 @@ void processI2C2() {
     }
 }
 
-void initI2C2_PPS() {
-    // Unlock PPS for configuring I2C2
-    unlockPPS(); 
-
-    // Assign I2C2 SDA2 and SCL2 to specific pins
-    RPB8Rbits.RPB8R = 0b0010;  // Set RPB8 as SDA2
-    RPB9Rbits.RPB9R = 0b0010;  // Set RPB9 as SCL2
-
-    lockPPS();  // Lock PPS
-
-    // Setup I2C2 as slave
-    i2c2InitAsSlave(I2C2_ADDRESS);
+void initI2C2() {
+    I2C2CONbits.I2CEN = 1;   // Enable I2C2 module
+    I2C2BRG = 0x27;          // Set the baud rate generator for I2C2
+    i2c2InitAsSlave(I2C2_ADDRESS); 
 }
+
 
 void i2c2InitAsSlave(uint8_t address) {
     I2C2BRG = 0x0076;         // Set baud rate for I2C2
@@ -119,13 +115,11 @@ void i2c2InitAsSlave(uint8_t address) {
     IEC1bits.I2C2BIE = 1;   // Enable I2C2 Master Interrupt
 }
 
-// I2C2 Interrupt Handler and related functions (same as provided earlier)
 void i2c2InterruptHandler() {
-    // Check if the master is writing data
     if (I2C2STATbits.R_W == 0) {
-        i2c2ReadData();  // Read data from the master
+        i2c2ReadData();  
     } else {
-        i2c2WriteData();  // Write data to the master
+        i2c2WriteData();
     }
 }
 
@@ -141,38 +135,46 @@ void i2c2ReadData() {
 }
 
 void i2c2WriteData() {
-    // Implement data writing logic here (send data to master)
-    uint8_t dataToSend = 0x55;  // Example data to send
-    I2C2TRN = dataToSend; // Transmit data to master
-    while (I2C2STATbits.TRSTAT);  // Wait until transmission is complete
+    uint8_t dataToSend = 0x55;
+    I2C2TRN = dataToSend;
+    while (I2C2STATbits.TRSTAT);
 }
 
 void clearI2C2Interrupt() {
-    IFS1bits.I2C2BIF = 0;  // Clear the interrupt flag
+    IFS1bits.I2C2BIF = 0;  
 }
 
-void initI2C_PPS() {
-    unlockPPS();  
-    RPB8Rbits.RPB8R = 0b0001;
-    RPB9Rbits.RPB9R = 0b0001; 
-    lockPPS(); 
+void initI2C1() {
     I2C1CONbits.I2CEN = 1;   
-    I2C1BRG = 0x27;          
+    I2C1BRG = 0x27;         
 }
+
+//void initUART_PPS() {
+//    unlockPPS();  
+//    U1RXR = 0011; 
+//    RPB15R = 0001;    
+//    lockPPS();  
+//    U1MODEbits.UARTEN = 1;   // Enable UART
+//    U1MODEbits.BRGH = 0;     // Low-speed mode
+//    U1BRG = 25;              // Baud rate configuration (depends on clock)
+//    U1STAbits.UTXEN = 1;     // Enable UART transmit
+//}
 
 void initUART_PPS() {
     unlockPPS();  
-    U1RXR = 0011; 
-    RPB15R = 0001;    
+    RPA0Rbits.RPA0R = 0b0001;  // Set RPA0 as U1TX (TX pin)
+    U1RXRbits.U1RXR = 0b0000;  // Set RPA2 as U1RX (RX pin)
     lockPPS();  
-    U1MODEbits.UARTEN = 1;   // Enable UART
-    U1MODEbits.BRGH = 0;     // Low-speed mode
-    U1BRG = 25;              // Baud rate configuration (depends on clock)
-    U1STAbits.UTXEN = 1;     // Enable UART transmit
+    U1MODEbits.BRGH = 0;                
+    U1MODEbits.PDSEL = 0; 
+    U1MODEbits.STSEL = 0;  
+    U1MODEbits.UARTEN = 1;
+    U1STAbits.UTXEN = 1; 
 }
 
+
 void initSystem() {
-    initI2C_PPS();
+    initI2C1();
     initUART_PPS(); 
     i2c2InitAsSlave(I2C2_ADDRESS);
 }
@@ -236,45 +238,45 @@ uint16_t readDACValue() {
 }
 
 void mcp4725WriteDAC(uint16_t value) {
-    i2cStart();
-    i2cWrite(MCP4725_ADDRESS << 1);   
-    i2cWrite((value >> 4) & 0xFF);   
-    i2cWrite((value & 0x0F) << 4);  
-    i2cStop();
+    i2c1Start();
+    i2c1Write(MCP4725_ADDRESS << 1);   
+    i2c1Write((value >> 4) & 0xFF);   
+    i2c1Write((value & 0x0F) << 4);  
+    i2c1Stop();
 }
 
 uint16_t mcp4725ReadDAC() {
     uint16_t value = 0;
-    i2cStart();
-    i2cWrite((MCP4725_ADDRESS << 1) | 1);  
-    value = i2cReadAck() << 4;  
-    value |= i2cReadNack() >> 4; 
-    i2cStop();
+    i2c1Start();
+    i2c1Write((MCP4725_ADDRESS << 1) | 1);  
+    value = i2c1ReadAck() << 4;  
+    value |= i2c1ReadNack() >> 4; 
+    i2c1Stop();
     return value;
 }
 
-void i2cStart() {
+void i2c1Start() {
     I2C1CONbits.SEN = 1;  
     while (I2C1CONbits.SEN);
 }
 
-void i2cStop() {
+void i2c1Stop() {
     I2C1CONbits.PEN = 1;  
     while (I2C1CONbits.PEN);
 }
 
-void i2cWrite(uint8_t data) {
+void i2c1Write(uint8_t data) {
     I2C1TRN = data;
     while (I2C1STATbits.TRSTAT);
 }
 
-uint8_t i2cReadAck() {
+uint8_t i2c1ReadAck() {
     I2C1CONbits.RCEN = 1;
     while (!I2C1STATbits.RBF);
     return I2C1RCV;
 }
 
-uint8_t i2cReadNack() {
+uint8_t i2c1ReadNack() {
     I2C1CONbits.RCEN = 1;
     while (!I2C1STATbits.RBF);
     return I2C1RCV;
