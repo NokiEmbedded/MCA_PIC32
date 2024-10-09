@@ -2,18 +2,17 @@
  * File:   newmainXC16.c
  * Author: Dell
  *
- * Created on October 7, 2024, 12:32 PM
+ * Created on October 9, 2024, 8:07 AM
  */
-
 
 #include <xc.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
 
-#include "dacCommunication.h"
-#include "fpgaCommunication.h"
-#include "i2cCommunication.h"
+#include "dac.h"
+#include "fpga.h"
+#include "slaveComm.h"
 
 //#define FCY 16000000  
 //#define BAUDRATE 9600 
@@ -108,3 +107,4 @@ void resetSystem() {
     RCONbits.SWR = 1;
     lockPPS();
 }
+

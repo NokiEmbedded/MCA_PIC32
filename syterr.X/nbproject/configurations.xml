@@ -9,10 +9,7 @@
                    displayName="Important Files"
                    projectFiles="true">
       <itemPath>Makefile</itemPath>
-      <itemPath>mca_i2c.mc3</itemPath>
-      <itemPath>dacCommunication.h</itemPath>
-      <itemPath>fpgaCommunication.h</itemPath>
-      <itemPath>i2cCommunication.h</itemPath>
+      <itemPath>syterr.mc3</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -22,9 +19,12 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>newmainXC16.c</itemPath>
-      <itemPath>dacCommunication.c</itemPath>
-      <itemPath>fpgaCommunication.c</itemPath>
-      <itemPath>i2cCommunication.c</itemPath>
+      <itemPath>slaveComm.h</itemPath>
+      <itemPath>slaveComm.c</itemPath>
+      <itemPath>dac.c</itemPath>
+      <itemPath>dac.h</itemPath>
+      <itemPath>fpga.c</itemPath>
+      <itemPath>fpga.h</itemPath>
     </logicalFolder>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
