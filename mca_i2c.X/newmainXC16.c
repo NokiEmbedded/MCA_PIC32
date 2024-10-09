@@ -107,4 +107,5 @@ void resetSystem() {
     unlockPPS();
     RCONbits.SWR = 1;
     lockPPS();
+    printf("print statements included");
 }
