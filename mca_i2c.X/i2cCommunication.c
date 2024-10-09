@@ -6,7 +6,7 @@
 
 #define I2C2_ADDRESS 0x20
 
-char command[100];  // Declare command buffer
+extern char command[100];  // Declare command buffer
 
 void processI2C2() {
     if (IFS1bits.I2C2BIF) {

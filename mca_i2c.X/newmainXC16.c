@@ -15,8 +15,8 @@
 #include "fpgaCommunication.h"
 #include "i2cCommunication.h"
 
-//#define FCY 16000000  
-//#define BAUDRATE 9600 
+#define FCY 16000000  
+#define BAUDRATE 9600 
 
 #pragma config FNOSC = FRCPLL     // Primary Oscillator: Fast RC with PLL
 #pragma config POSCMOD = XT          // External Crystal Oscillator mode (XT, HS, or EC mode)
