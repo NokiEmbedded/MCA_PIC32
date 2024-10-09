@@ -133,6 +133,7 @@ void processCommand(char* command) {
     if (strcmp(command, "init") == 0) {
         initSystem();  // Initialize system components (UART, I2C, etc.)
         sendToUART("System Initialized\n");
+        
         sendToUSB("System Initialized\n");
     }
     else if (strcmp(command, "start") == 0) {

@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=mca_usb.X
+PROJECTNAME=usb_interface.X
 
 # Active Configuration
 DEFAULTCONF=default
