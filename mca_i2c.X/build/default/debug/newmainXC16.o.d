@@ -1,4 +1,4 @@
-build/default/production/newmainXC16.o: newmainXC16.c dacCommunication.h \
+build/default/debug/newmainXC16.o: newmainXC16.c dacCommunication.h \
  fpgaCommunication.h i2cCommunication.h
 
 dacCommunication.h:
