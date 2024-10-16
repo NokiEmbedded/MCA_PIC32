@@ -1,10 +1,3 @@
-/*
- * File:   newmainXC16.c
- * Author: info_noki
- *
- * Created on October 16, 2024, 11:15 AM
- */
-
 #include <xc.h>
 
 // Configuration bits settings
@@ -42,9 +35,9 @@ void handleCommand(char command) {
 }
 
 void UART_Init() {
-    // Set RP22 (Pin 2) as UART RX and RP23 (Pin 3) as UART TX
-    RPINR18bits.U1RXR = 22;  // Assign RP22 as UART1 RX
-    RPOR11bits.RP23R = 3;     // Assign RP23 as UART1 TX (3 corresponds to UART1 TX function)
+    // Set RP21 (Pin 1) as UART RX and RP22 (Pin 2) as UART TX
+    RPINR18bits.U1RXR = 21;  // Assign RP21 as UART1 RX
+    RPOR11bits.RP22R = 3;     // Assign RP22 as UART1 TX (3 corresponds to UART1 TX function)
 
     // Configure UART parameters
     U1MODEbits.BRGH = 0;      // Low-speed mode
@@ -74,4 +67,3 @@ void setup() {
     TRISAbits.TRISA8 = 0;     // Set RA8 as output
     LATAbits.LATA8 = 0;       // Initially turn off the LED
 }
-
