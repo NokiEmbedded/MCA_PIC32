@@ -4,13 +4,13 @@ Tool Name:
   c:\program files\microchip\xc16\v2.10\bin\bin\..\bin/elf-ld.exe
 
 Command:
-  -TC:\\Users\\INFO_N~1\\AppData\\Local\\Temp\\tmp0000191c.00 \
-  -TC:\\Users\\INFO_N~1\\AppData\\Local\\Temp\\tmp0000191c.01 \
-  -TC:\\Users\\INFO_N~1\\AppData\\Local\\Temp\\tmp0000191c.02 \
-  -TC:\\Users\\INFO_N~1\\AppData\\Local\\Temp\\tmp0000191c.03 \
-  -TC:\\Users\\INFO_N~1\\AppData\\Local\\Temp\\tmp0000191c.04 \
-  -TC:\\Users\\INFO_N~1\\AppData\\Local\\Temp\\tmp0000191c.05 \
-  -TC:\\Users\\INFO_N~1\\AppData\\Local\\Temp\\tmp0000191c.06 \
+  -TC:\\Users\\INFO_N~1\\AppData\\Local\\Temp\\tmp00002184.00 \
+  -TC:\\Users\\INFO_N~1\\AppData\\Local\\Temp\\tmp00002184.01 \
+  -TC:\\Users\\INFO_N~1\\AppData\\Local\\Temp\\tmp00002184.02 \
+  -TC:\\Users\\INFO_N~1\\AppData\\Local\\Temp\\tmp00002184.03 \
+  -TC:\\Users\\INFO_N~1\\AppData\\Local\\Temp\\tmp00002184.04 \
+  -TC:\\Users\\INFO_N~1\\AppData\\Local\\Temp\\tmp00002184.05 \
+  -TC:\\Users\\INFO_N~1\\AppData\\Local\\Temp\\tmp00002184.06 \
   -p24FJ256GA705 \
   --mdfp=C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC24F-GA-GB_DFP/1.9.336/xc16 \
   -o \
@@ -76,9 +76,10 @@ Default Scalar Model: Small
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x100               0x10a           0x18f  (399)
-.text                        0x20a                0x70            0xa8  (168)
+.const                       0x20a                 0xc            0x12  (18)
+.text                        0x216                0xac           0x102  (258)
 
-                 Total "program" memory used (bytes):          0x237  (567) <1%
+                 Total "program" memory used (bytes):          0x2a3  (675) <1%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x4000]
@@ -112,29 +113,31 @@ External Symbols in Program Memory (by address):
 
                   0x000100                  __resetPRI
                   0x00013c                  __psv_init
-                  0x000152                  __data_init_da
                   0x000152                  __data_init
+                  0x000152                  __data_init_da
                   0x000204                  __DefaultInterrupt
-                  0x00020a                  _UART_Init
-                  0x00021a                  _UART_Write
-                  0x000232                  _UART_Read
-                  0x000246                  _setup
-                  0x000250                  _loop
-                  0x000270                  _main
+                  0x000216                  _main
+                  0x000226                  _handleCommand
+                  0x00024c                  _UART_Init
+                  0x000272                  _UART_Write
+                  0x00028a                  _UART_WriteString
+                  0x0002a4                  _UART_Read
+                  0x0002b8                  _setup
 
 External Symbols in Program Memory (by name):
 
-                  0x00020a                  _UART_Init
-                  0x000232                  _UART_Read
-                  0x00021a                  _UART_Write
+                  0x00024c                  _UART_Init
+                  0x0002a4                  _UART_Read
+                  0x000272                  _UART_Write
+                  0x00028a                  _UART_WriteString
                   0x000204                  __DefaultInterrupt
                   0x000152                  __data_init
                   0x000152                  __data_init_da
                   0x00013c                  __psv_init
                   0x000100                  __resetPRI
-                  0x000250                  _loop
-                  0x000270                  _main
-                  0x000246                  _setup
+                  0x000226                  _handleCommand
+                  0x000216                  _main
+                  0x0002b8                  _setup
 
 Memory Configuration
 
@@ -275,26 +278,26 @@ __FDEVOPT1
 .comment
  *(.comment)
 
-.debug_info       0x000000        0x8be
+.debug_info       0x000000        0xa1b
  *(.debug_info)
- .debug_info      0x000000        0x8be build/default/debug/newmainXC16.o
+ .debug_info      0x000000        0xa1b build/default/debug/newmainXC16.o
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev     0x000000        0x122
+.debug_abbrev     0x000000        0x126
  *(.debug_abbrev)
- .debug_abbrev    0x000000        0x122 build/default/debug/newmainXC16.o
+ .debug_abbrev    0x000000        0x126 build/default/debug/newmainXC16.o
 
-.debug_line       0x000000        0x127
+.debug_line       0x000000        0x130
  *(.debug_line)
- .debug_line      0x000000        0x127 build/default/debug/newmainXC16.o
+ .debug_line      0x000000        0x130 build/default/debug/newmainXC16.o
 
-.debug_frame      0x000000         0xb0
+.debug_frame      0x000000         0xca
  *(.debug_frame)
- .debug_frame     0x000000         0xb0 build/default/debug/newmainXC16.o
+ .debug_frame     0x000000         0xca build/default/debug/newmainXC16.o
 
-.debug_str        0x000000         0x28
+.debug_str        0x000000         0x3f
  *(.debug_str)
- .debug_str       0x000000         0x28 build/default/debug/newmainXC16.o
+ .debug_str       0x000000         0x3f build/default/debug/newmainXC16.o
 
 .debug_loc
  *(.debug_loc)
@@ -303,10 +306,10 @@ __FDEVOPT1
  *(.debug_macinfo)
 
 .debug_pubnames
-                  0x000000         0x59
+                  0x000000         0x77
  *(.debug_pubnames)
  .debug_pubnames
-                  0x000000         0x59 build/default/debug/newmainXC16.o
+                  0x000000         0x77 build/default/debug/newmainXC16.o
 
 .debug_ranges
  *(.debug_ranges)
@@ -1753,28 +1756,32 @@ OUTPUT(dist/default/debug/PIC24_UART.X.debug.elf elf32-pic30)
 LOAD default_isr
 
 .debug_pubtypes
-                  0x000018         0x9b
+                  0x000018         0xdf
  .debug_pubtypes
-                  0x000018         0x9b build/default/debug/newmainXC16.o
+                  0x000018         0xdf build/default/debug/newmainXC16.o
 
 __c30_signature
-                  0x0000b3         0x12
+                  0x0000f7         0x12
  __c30_signature
-                  0x0000b3          0x6 build/default/debug/newmainXC16.o
+                  0x0000f7          0x6 build/default/debug/newmainXC16.o
  __c30_signature
-                  0x0000b9          0x6 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(crt0_extended24.o)
+                  0x0000fd          0x6 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(crt0_extended24.o)
  __c30_signature
-                  0x0000bf          0x6 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(data_init_24.o)
+                  0x000103          0x6 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(data_init_24.o)
 
 .config_WDTCLK    0x02af20          0x2
  .config_WDTCLK
                   0x02af20          0x2 build/default/debug/newmainXC16.o
 
-.text             0x00020a         0x70
- .text            0x00020a         0x70 build/default/debug/newmainXC16.o
-                  0x00020a                  _UART_Init
-                  0x00021a                  _UART_Write
-                  0x000232                  _UART_Read
-                  0x000246                  _setup
-                  0x000250                  _loop
-                  0x000270                  _main
+.const              0x820a          0xc load address 0x00020a  
+ .const             0x820a          0xc build/default/debug/newmainXC16.o
+
+.text             0x000216         0xac
+ .text            0x000216         0xac build/default/debug/newmainXC16.o
+                  0x000216                  _main
+                  0x000226                  _handleCommand
+                  0x00024c                  _UART_Init
+                  0x000272                  _UART_Write
+                  0x00028a                  _UART_WriteString
+                  0x0002a4                  _UART_Read
+                  0x0002b8                  _setup
