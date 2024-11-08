@@ -3,19 +3,24 @@
 #include <string.h>
 #include <stdio.h>
 #include "fpga.h"
+ 
 
-void initUART_PPS() {
+void initUART1_PPS() {
     unlockPPS();  
-    RPA0Rbits.RPA0R = 0b0001;  // Set RPA0 as U1TX (TX pin)
-    U1RXRbits.U1RXR = 0b0000;  // Set RPA2 as U1RX (RX pin)
+    // Set RPA0 as U1TX (TX pin)
+    RPA0Rbits.RPA0R = 0b0001;  
+    // Set RPb2 as U1RX (RX pin)
+    U1RXRbits.U1RXR = 0b0100;  
     lockPPS();  
 
+    // Configure UART1 settings
     U1MODEbits.BRGH = 0;                // Low-speed mode
     U1MODEbits.PDSEL = 0;               // 8-bit data, no parity
     U1MODEbits.STSEL = 0;               // 1 Stop bit
     U1MODEbits.UARTEN = 1;              // Enable UART
     U1STAbits.UTXEN = 1;                // Enable UART transmit
 }
+
 
 void sendToUART(char* message) {
     for (uint16_t i = 0; i < strlen(message); i++) {

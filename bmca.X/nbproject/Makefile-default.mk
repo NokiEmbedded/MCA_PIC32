@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=newmainXC16.c slaveComm.c dac.c fpga.c
+SOURCEFILES_QUOTED_IF_SPACED=newmainXC16.c dac.c fpga.c slaveComm.c uart_usb.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/newmainXC16.o ${OBJECTDIR}/slaveComm.o ${OBJECTDIR}/dac.o ${OBJECTDIR}/fpga.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/newmainXC16.o.d ${OBJECTDIR}/slaveComm.o.d ${OBJECTDIR}/dac.o.d ${OBJECTDIR}/fpga.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/newmainXC16.o ${OBJECTDIR}/dac.o ${OBJECTDIR}/fpga.o ${OBJECTDIR}/slaveComm.o ${OBJECTDIR}/uart_usb.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/newmainXC16.o.d ${OBJECTDIR}/dac.o.d ${OBJECTDIR}/fpga.o.d ${OBJECTDIR}/slaveComm.o.d ${OBJECTDIR}/uart_usb.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/newmainXC16.o ${OBJECTDIR}/slaveComm.o ${OBJECTDIR}/dac.o ${OBJECTDIR}/fpga.o
+OBJECTFILES=${OBJECTDIR}/newmainXC16.o ${OBJECTDIR}/dac.o ${OBJECTDIR}/fpga.o ${OBJECTDIR}/slaveComm.o ${OBJECTDIR}/uart_usb.o
 
 # Source Files
-SOURCEFILES=newmainXC16.c slaveComm.c dac.c fpga.c
+SOURCEFILES=newmainXC16.c dac.c fpga.c slaveComm.c uart_usb.c
 
 
 
@@ -85,7 +85,7 @@ endif
 	${MAKE}  -f nbproject/Makefile-default.mk ${DISTDIR}/bmca.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
 
 MP_PROCESSOR_OPTION=32MX250F128D
-MP_LINKER_FILE_OPTION=
+MP_LINKER_FILE_OPTION=,--script="dac.c"
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: assemble
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
@@ -107,12 +107,6 @@ ${OBJECTDIR}/newmainXC16.o: newmainXC16.c  .generated_files/flags/default/11fc09
 	@${RM} ${OBJECTDIR}/newmainXC16.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/newmainXC16.o.d" -o ${OBJECTDIR}/newmainXC16.o newmainXC16.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
-${OBJECTDIR}/slaveComm.o: slaveComm.c  .generated_files/flags/default/9d6c2339e1fd482cad623ec2a9b58b9827af4ede .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/slaveComm.o.d 
-	@${RM} ${OBJECTDIR}/slaveComm.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/slaveComm.o.d" -o ${OBJECTDIR}/slaveComm.o slaveComm.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
-	
 ${OBJECTDIR}/dac.o: dac.c  .generated_files/flags/default/b4904c0fcb3319fdcdc53aef8726200fa5e3b257 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/dac.o.d 
@@ -125,18 +119,24 @@ ${OBJECTDIR}/fpga.o: fpga.c  .generated_files/flags/default/219dcd5616e2029545d5
 	@${RM} ${OBJECTDIR}/fpga.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/fpga.o.d" -o ${OBJECTDIR}/fpga.o fpga.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
+${OBJECTDIR}/slaveComm.o: slaveComm.c  .generated_files/flags/default/9d6c2339e1fd482cad623ec2a9b58b9827af4ede .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/slaveComm.o.d 
+	@${RM} ${OBJECTDIR}/slaveComm.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/slaveComm.o.d" -o ${OBJECTDIR}/slaveComm.o slaveComm.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/uart_usb.o: uart_usb.c  .generated_files/flags/default/79e8b25b283a48fbb7935ce2d153a868f1fffdb1 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/uart_usb.o.d 
+	@${RM} ${OBJECTDIR}/uart_usb.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/uart_usb.o.d" -o ${OBJECTDIR}/uart_usb.o uart_usb.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
 else
 ${OBJECTDIR}/newmainXC16.o: newmainXC16.c  .generated_files/flags/default/4414d6e44ca5d2554f2a8398c8df48b3e39f600e .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/newmainXC16.o.d 
 	@${RM} ${OBJECTDIR}/newmainXC16.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/newmainXC16.o.d" -o ${OBJECTDIR}/newmainXC16.o newmainXC16.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
-	
-${OBJECTDIR}/slaveComm.o: slaveComm.c  .generated_files/flags/default/2bc1c2e931b8ba614fae2e0c1ad47904d0043bc5 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/slaveComm.o.d 
-	@${RM} ${OBJECTDIR}/slaveComm.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/slaveComm.o.d" -o ${OBJECTDIR}/slaveComm.o slaveComm.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
 ${OBJECTDIR}/dac.o: dac.c  .generated_files/flags/default/882c3e2b0c36df41cc383f0df6728f42b45124c1 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
@@ -150,6 +150,18 @@ ${OBJECTDIR}/fpga.o: fpga.c  .generated_files/flags/default/b46b3d59ca3a30776a37
 	@${RM} ${OBJECTDIR}/fpga.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/fpga.o.d" -o ${OBJECTDIR}/fpga.o fpga.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
+${OBJECTDIR}/slaveComm.o: slaveComm.c  .generated_files/flags/default/2bc1c2e931b8ba614fae2e0c1ad47904d0043bc5 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/slaveComm.o.d 
+	@${RM} ${OBJECTDIR}/slaveComm.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/slaveComm.o.d" -o ${OBJECTDIR}/slaveComm.o slaveComm.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/uart_usb.o: uart_usb.c  .generated_files/flags/default/633e269042d6c73eade3bc1e9cbb7ef4474ba281 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/uart_usb.o.d 
+	@${RM} ${OBJECTDIR}/uart_usb.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/uart_usb.o.d" -o ${OBJECTDIR}/uart_usb.o uart_usb.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
 endif
 
 # ------------------------------------------------------------------------------------
@@ -161,12 +173,12 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: link
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${DISTDIR}/bmca.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk    
+${DISTDIR}/bmca.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk    dac.c
 	@${MKDIR} ${DISTDIR} 
 	${MP_CC} $(MP_EXTRA_LD_PRE) -g -mdebugger -D__MPLAB_DEBUGGER_SIMULATOR=1 -mprocessor=$(MP_PROCESSOR_OPTION)  -o ${DISTDIR}/bmca.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX} ${OBJECTFILES_QUOTED_IF_SPACED}          -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)      -Wl,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_LD_POST)$(MP_LINKER_FILE_OPTION),--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,-D=__DEBUG_D,--defsym=__MPLAB_DEBUGGER_SIMULATOR=1,--defsym=_min_heap_size=0,--gc-sections,--no-code-in-dinit,--no-dinit-in-serial-mem,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--memorysummary,${DISTDIR}/memoryfile.xml -mdfp="${DFP_DIR}"
 	
 else
-${DISTDIR}/bmca.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk   
+${DISTDIR}/bmca.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk   dac.c
 	@${MKDIR} ${DISTDIR} 
 	${MP_CC} $(MP_EXTRA_LD_PRE)  -mprocessor=$(MP_PROCESSOR_OPTION)  -o ${DISTDIR}/bmca.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX} ${OBJECTFILES_QUOTED_IF_SPACED}          -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -Wl,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_LD_POST)$(MP_LINKER_FILE_OPTION),--defsym=_min_heap_size=0,--gc-sections,--no-code-in-dinit,--no-dinit-in-serial-mem,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--memorysummary,${DISTDIR}/memoryfile.xml -mdfp="${DFP_DIR}"
 	${MP_CC_DIR}\\xc32-bin2hex ${DISTDIR}/bmca.X.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX} 
