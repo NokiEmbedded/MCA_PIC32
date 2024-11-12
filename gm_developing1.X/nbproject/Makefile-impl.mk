@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=gm_developing.X
+PROJECTNAME=gm_developing1.X
 
 # Active Configuration
 DEFAULTCONF=default

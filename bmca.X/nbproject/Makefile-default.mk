@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=newmainXC16.c dac.c fpga.c slaveComm.c uart_usb.c
+SOURCEFILES_QUOTED_IF_SPACED=dac.c fpga.c slaveComm.c uart_usb.c newmainXC16.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/newmainXC16.o ${OBJECTDIR}/dac.o ${OBJECTDIR}/fpga.o ${OBJECTDIR}/slaveComm.o ${OBJECTDIR}/uart_usb.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/newmainXC16.o.d ${OBJECTDIR}/dac.o.d ${OBJECTDIR}/fpga.o.d ${OBJECTDIR}/slaveComm.o.d ${OBJECTDIR}/uart_usb.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/dac.o ${OBJECTDIR}/fpga.o ${OBJECTDIR}/slaveComm.o ${OBJECTDIR}/uart_usb.o ${OBJECTDIR}/newmainXC16.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/dac.o.d ${OBJECTDIR}/fpga.o.d ${OBJECTDIR}/slaveComm.o.d ${OBJECTDIR}/uart_usb.o.d ${OBJECTDIR}/newmainXC16.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/newmainXC16.o ${OBJECTDIR}/dac.o ${OBJECTDIR}/fpga.o ${OBJECTDIR}/slaveComm.o ${OBJECTDIR}/uart_usb.o
+OBJECTFILES=${OBJECTDIR}/dac.o ${OBJECTDIR}/fpga.o ${OBJECTDIR}/slaveComm.o ${OBJECTDIR}/uart_usb.o ${OBJECTDIR}/newmainXC16.o
 
 # Source Files
-SOURCEFILES=newmainXC16.c dac.c fpga.c slaveComm.c uart_usb.c
+SOURCEFILES=dac.c fpga.c slaveComm.c uart_usb.c newmainXC16.c
 
 
 
@@ -101,12 +101,6 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/newmainXC16.o: newmainXC16.c  .generated_files/flags/default/11fc09617a893b1653bb8306c26a6d32bd6ebd34 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/newmainXC16.o.d 
-	@${RM} ${OBJECTDIR}/newmainXC16.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/newmainXC16.o.d" -o ${OBJECTDIR}/newmainXC16.o newmainXC16.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
-	
 ${OBJECTDIR}/dac.o: dac.c  .generated_files/flags/default/b4904c0fcb3319fdcdc53aef8726200fa5e3b257 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/dac.o.d 
@@ -131,13 +125,13 @@ ${OBJECTDIR}/uart_usb.o: uart_usb.c  .generated_files/flags/default/79e8b25b283a
 	@${RM} ${OBJECTDIR}/uart_usb.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/uart_usb.o.d" -o ${OBJECTDIR}/uart_usb.o uart_usb.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
-else
-${OBJECTDIR}/newmainXC16.o: newmainXC16.c  .generated_files/flags/default/4414d6e44ca5d2554f2a8398c8df48b3e39f600e .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/newmainXC16.o: newmainXC16.c  .generated_files/flags/default/11fc09617a893b1653bb8306c26a6d32bd6ebd34 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/newmainXC16.o.d 
 	@${RM} ${OBJECTDIR}/newmainXC16.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/newmainXC16.o.d" -o ${OBJECTDIR}/newmainXC16.o newmainXC16.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_SIMULATOR=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/newmainXC16.o.d" -o ${OBJECTDIR}/newmainXC16.o newmainXC16.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
+else
 ${OBJECTDIR}/dac.o: dac.c  .generated_files/flags/default/882c3e2b0c36df41cc383f0df6728f42b45124c1 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/dac.o.d 
@@ -161,6 +155,12 @@ ${OBJECTDIR}/uart_usb.o: uart_usb.c  .generated_files/flags/default/633e269042d6
 	@${RM} ${OBJECTDIR}/uart_usb.o.d 
 	@${RM} ${OBJECTDIR}/uart_usb.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/uart_usb.o.d" -o ${OBJECTDIR}/uart_usb.o uart_usb.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/newmainXC16.o: newmainXC16.c  .generated_files/flags/default/4414d6e44ca5d2554f2a8398c8df48b3e39f600e .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/newmainXC16.o.d 
+	@${RM} ${OBJECTDIR}/newmainXC16.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/newmainXC16.o.d" -o ${OBJECTDIR}/newmainXC16.o newmainXC16.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
 endif
 

@@ -36,24 +36,13 @@
 #define CMD_SET_VOLTAGE 0x04  // New command for setting voltage 
 #define CMD_GET_VOLTAGE 0x05  // New command for reading voltage
 
-#define UART_BUFFER_SIZE 64
-#define START_CMD "START\r\n"
-#define STOP_CMD "STOP\r\n"
-#define RESET_CMD "RESET\r\n"
-#define SET_VOLTAGE_CMD "VOLTAGE="
-
 volatile uint32_t pulseCount = 0;
 volatile uint8_t isCountingEnabled = 0;
 volatile uint16_t currentVoltage = 0;  // Store ADC reading
 volatile uint16_t targetVoltage = 0;
 
-volatile char uartBuffer[UART_BUFFER_SIZE];
-volatile uint8_t bufferIndex = 0;
-volatile bool systemEnabled = false;
-
-
 int LastError = 0;
-
+uint16_t newVoltage;
 volatile uint16_t count = 0;
 
 void InitMCP2200(unsigned int VendorID, unsigned int ProductID);
@@ -77,29 +66,16 @@ void init_oscillator(void) {
 
 void init_uart(void) {
     __builtin_write_OSCCONL(OSCCON & 0xbf);
-    RPOR2bits.RP39R = 1;      // Map U1TX to RP39
-    RPINR18bits.U1RXR = 40;   // Map U1RX to RP40
+    RPOR2bits.RP39R = 1;
+    RPINR18bits.U1RXR = 40;
     __builtin_write_OSCCONL(OSCCON | 0x40);
+    U1MODEbits.UARTEN = 0;    
+    U1MODEbits.BRGH = 0;
+    U1BRG = ((FCY / (16 * UART_BAUDRATE)) - 1); 
+    U1STAbits.UTXEN = 1;    
+    U1MODEbits.UARTEN = 1;    
     
-    U1MODEbits.UARTEN = 0;    // Disable UART while configuring
-    U1MODEbits.BRGH = 0;      // Standard speed mode
-    U1BRG = ((FCY / (16 * UART_BAUDRATE)) - 1);
-    
-    // Configure UART receive interrupt
-    IEC0bits.U1RXIE = 1;      // Enable UART1 RX interrupt
-    IPC2bits.U1RXIP = 5;      // Set interrupt priority (1-7)
-    IFS0bits.U1RXIF = 0;      // Clear interrupt flag
-    
-    U1STAbits.URXISEL = 0;    // Interrupt when any character is received
-    U1STAbits.UTXEN = 1;      // Enable transmit
-    U1MODEbits.UARTEN = 1;    // Enable UART
-    
-//    printf("UART Initialized. Waiting for commands...\n");
-//    printf("Available commands:\n");
-//    printf("START - Start the system\n");
-//    printf("STOP - Stop the system\n");
-//    printf("RESET - Reset pulse count\n");
-//    printf("VOLTAGE=xxxx - Set voltage (0-4095)\n");
+//    printf("USB Initialized...");
 }
 
 void InitMCP2200(unsigned int VendorID, unsigned int ProductID) {
@@ -199,25 +175,21 @@ void MCP4725_SetOutput(uint16_t dacValue) {
     I2C_Start(); // Begin I2C communication
 
     if (I2C_Write(MCP4725_ADDRESS << 1) != 0) { // Write address
-//        printf("Failed to acknowledge MCP4725 address\n");
         I2C_Stop();
         return; 
     }
     
     if (I2C_Write(0x40) != 0) { // Control byte
-//        printf("Failed to acknowledge control byte\n");
         I2C_Stop();
         return;
     }
     
     if (I2C_Write(upperData) != 0) { // Upper data byte
-//        printf("Failed to acknowledge upper data\n");
         I2C_Stop();
         return;
     }
     
     if (I2C_Write(lowerData) != 0) { // Lower data byte
-//        printf("Failed to acknowledge lower data\n");
         I2C_Stop();
         return;
     }
@@ -225,6 +197,7 @@ void MCP4725_SetOutput(uint16_t dacValue) {
     I2C_Stop(); // End communication
     printf("MCP4725 output set to: %u\n", dacValue);
 }
+
 
 //void ScanI2CDevices(void) {
 //    printf("Scanning I2C devices...\n");
@@ -236,26 +209,45 @@ void MCP4725_SetOutput(uint16_t dacValue) {
 //        I2C_Stop(); 
 //    }
 //}
-void BlinkLED(uint16_t duration) {
-    LED_PIN = 1; 
-    __delay_ms(duration); 
-    LED_PIN = 0; // Turn off LED
-//    printf("BlinkLED completed\n");
-    return; // Explicit return
+//void BlinkLED(uint16_t duration) {
+//    LED_PIN = 1; 
+//    __delay_ms(duration); 
+//    LED_PIN = 0; // Turn off LED
+////    printf("BlinkLED completed\n");
+//    return; 
+//}
+
+void initRA10() {
+    TRISAbits.TRISA10 = 0;  // Set RA10 as an output
 }
 
+// Function to control LED on RA10
+void controlLED(int input) {
+    if (input == 1) {
+        LATAbits.LATA10 = 1;  // Turn on LED
+    } else {
+        LATAbits.LATA10 = 0;  // Turn off LED
+    }
+}
+
+void initLED(void) {
+    TRISAbits.TRISA10 = 0;    
+    LATAbits.LATA10 = 0;     
+}
+
+
 void initInterrupt(void) {
-    TRISBbits.TRISB12 = 1; // Set RB12 as input for CN interrupt
-    CNENBbits.CNIEB12 = 1; // Enable CN interrupt for RB12
-    IPC4bits.CNIP = 3;     // Set interrupt priority
-    IFS1bits.CNIF = 0;     // Clear CN interrupt flag
-    IEC1bits.CNIE = 1;     // Enable change notification interrupt
-    __builtin_enable_interrupts(); // Enable global interrupts
+    TRISBbits.TRISB12 = 1; 
+    CNENBbits.CNIEB12 = 1; 
+    IPC4bits.CNIP = 3;    
+    IFS1bits.CNIF = 0;    
+    IEC1bits.CNIE = 1;   
+    __builtin_enable_interrupts(); 
 }
 
 void __attribute__((__interrupt__, auto_psv)) _CNInterrupt(void) {
     if (IFS1bits.CNIF) {
-        count++; // Increment the count on interrupt
+        count++; 
         IFS1bits.CNIF = 0; // Clear the interrupt flag
     }
 }
@@ -291,83 +283,28 @@ uint16_t ADC_Read(void) {
     return ADC1BUF0;
 }
 
-void initRA10() {
-    TRISAbits.TRISA10 = 0;  // Set RA10 as an output
-}
-
-// Function to control LED on RA10
-void controlLED(int input) {
-    if (input == 1) {
-        LATAbits.LATA10 = 1;  // Turn on LED
-    } else {
-        LATAbits.LATA10 = 0;  // Turn off LED
-    }
-}
-
 
 void initI2C2Slave(void) {
-    // Disable I2C2 module during setup
     I2C2CONbits.I2CEN = 0;    
-    
-    // Reset I2C2 module
     I2C2CON = 0;
     I2C2STAT = 0;
-    
-    // Clear interrupt flags
     IFS3bits.MI2C2IF = 0;
     IFS3bits.SI2C2IF = 0;
-    
-    // Set slave address
     I2C2ADD = SLAVE_ADDRESS;
-    
-    // Configure I2C2 in slave mode
     I2C2CONbits.A10M = 0;     // 7-bit address mode
     I2C2CONbits.SCLREL = 1;   // Release SCL
     I2C2CONbits.STREN = 1;    // Enable clock stretching
     I2C2CONbits.GCEN = 0;     // Disable general call
     I2C2CONbits.DISSLW = 1;   // Disable slew rate control
-    
-    // Configure interrupts
     IEC3bits.MI2C2IE = 1;     // Master interrupt enable
     IEC3bits.SI2C2IE = 1;     // Slave interrupt enable
     IPC12bits.SI2C2IP = 5;    // Set slave interrupt priority
-    
-    // Enable I2C module
     I2C2CONbits.I2CEN = 1;    
 }
 
-void initLED(void) {
-    // Configure RA10 as output for LED
-    TRISAbits.TRISA10 = 0;    // Set as output
-    LATAbits.LATA10 = 0;      // Initially off
-}
 
 void __attribute__((interrupt, no_auto_psv)) _MI2C2Interrupt(void) {
     IFS3bits.MI2C2IF = 0;     // Clear master interrupt flag
-}
-
-void __attribute__((__interrupt__, auto_psv)) _U1RXInterrupt(void) {
-    char receivedChar;
-    
-    while (U1STAbits.URXDA) {  // While there is data in the receive buffer
-        receivedChar = U1RXREG;
-        
-        if (receivedChar == '\n' || receivedChar == '\r') {
-            // Null terminate the string
-            uartBuffer[bufferIndex] = '\0';
-            
-            // Process the command
-            processUARTCommand();
-            
-            // Reset buffer index
-            bufferIndex = 0;
-        }
-        else if (bufferIndex < UART_BUFFER_SIZE - 1) {
-            uartBuffer[bufferIndex++] = receivedChar;
-        }
-    }
-    
-    IFS0bits.U1RXIF = 0;  // Clear interrupt flag
 }
 
 void __attribute__((interrupt, no_auto_psv)) _SI2C2Interrupt(void) {
@@ -377,25 +314,22 @@ void __attribute__((interrupt, no_auto_psv)) _SI2C2Interrupt(void) {
     static uint8_t sendIndex = 0;
     static uint8_t expectedBytes = 0;
     static uint8_t currentCommand = 0;
-    
-    // Address match event
+
+    // Address event
     if(I2C2STATbits.D_A == 0) {
-        // Clear receive buffer
         uint8_t dummy = I2C2RCV;
         receiveIndex = 0;
         sendIndex = 0;
-        
-        // If it's a read operation based on previous command
+
+        // Master Read
         if(I2C2STATbits.R_W == 1) {
             switch(currentCommand) {
                 case CMD_GET_VOLTAGE:
-                    // Send high byte of voltage first
-                    byteToSend = (currentVoltage >> 8) & 0xFF;
+                    byteToSend = (currentVoltage >> 8) & 0xFF; // Send high byte
                     break;
-                    
+
                 default:  // Normal count reading
-                    // Send highest byte of count first
-                    byteToSend = (pulseCount >> 24) & 0xFF;
+                    byteToSend = (pulseCount >> 24) & 0xFF; // Send highest byte
                     break;
             }
             while(I2C2STATbits.TBF);
@@ -406,7 +340,7 @@ void __attribute__((interrupt, no_auto_psv)) _SI2C2Interrupt(void) {
     else {
         if(I2C2STATbits.R_W == 0) {  // Master Write
             receivedBytes[receiveIndex] = I2C2RCV;
-            
+
             if(receiveIndex == 0) {
                 currentCommand = receivedBytes[0];
                 // Determine how many additional bytes to expect
@@ -419,28 +353,28 @@ void __attribute__((interrupt, no_auto_psv)) _SI2C2Interrupt(void) {
                         break;
                 }
             }
-            
+
             if(receiveIndex == expectedBytes) {
                 // Process complete command
                 switch(currentCommand) {
                     case CMD_START:
                         isCountingEnabled = 1;
-                        LATAbits.LATA10 = 1;
+                        controlLED(1); // Turn on LED
                         break;
-                        
+
                     case CMD_STOP:
                         isCountingEnabled = 0;
-                        LATAbits.LATA10 = 0;
+                        controlLED(0); // Turn off LED
+                        MCP4725_SetOutput(0); 
                         break;
-                        
+
                     case CMD_RESET:
                         pulseCount = 0;
                         break;
-                        
+
                     case CMD_SET_VOLTAGE:
-                        // Combine two bytes into 16-bit voltage value
-                        targetVoltage = (receivedBytes[1] << 8) | receivedBytes[2];
-                        // Add your code here to set the actual voltage using DAC/PWM
+                        newVoltage = (receivedBytes[1] << 8) | receivedBytes[2];  // Assignment inside the case
+                        MCP4725_SetOutput(newVoltage);
                         break;
                 }
                 receiveIndex = 0;
@@ -454,68 +388,42 @@ void __attribute__((interrupt, no_auto_psv)) _SI2C2Interrupt(void) {
                     if(sendIndex == 0) {
                         byteToSend = currentVoltage & 0xFF;  // Send low byte
                     }
-                    break;
-                    
-                default:  // Normal count reading
-                    sendIndex++;
-                    if(sendIndex < 4) {
-                        byteToSend = (pulseCount >> (24 - (sendIndex * 8))) & 0xFF;
+                    else if(sendIndex == 1) {
+                        byteToSend = (currentVoltage >> 8) & 0xFF; // Send high byte
                     }
+                    sendIndex++;
+                    break;
+
+                default:  // Normal count reading
+                    if(sendIndex == 0) {
+                        byteToSend = (pulseCount >> 24) & 0xFF; // Send highest byte
+                    }
+                    else if(sendIndex == 1) {
+                        byteToSend = (pulseCount >> 16) & 0xFF;
+                    }
+                    else if(sendIndex == 2) {
+                        byteToSend = (pulseCount >> 8) & 0xFF;
+                    }
+                    else if(sendIndex == 3) {
+                        byteToSend = pulseCount & 0xFF; // Send lowest byte
+                    }
+                    sendIndex++;
                     break;
             }
-            
+
             if((sendIndex < 4 && currentCommand != CMD_GET_VOLTAGE) || 
-               (sendIndex < 1 && currentCommand == CMD_GET_VOLTAGE)) {
+               (sendIndex < 2 && currentCommand == CMD_GET_VOLTAGE)) {
                 while(I2C2STATbits.TBF);
                 I2C2TRN = byteToSend;
             }
         }
     }
-    
-    // Release clock stretching
+
     I2C2CONbits.SCLREL = 1;
     IFS3bits.SI2C2IF = 0;
 }
 
-void processUARTCommand(void) {
-    if (strncmp((const char*)uartBuffer, START_CMD, strlen(START_CMD)-2) == 0) {
-        systemEnabled = true;
-        isCountingEnabled = 1;
-        LATAbits.LATA10 = 1;  // Turn on LED
-        printf("System Started\n");
-    }
-    else if (strncmp((const char*)uartBuffer, STOP_CMD, strlen(STOP_CMD)-2) == 0) {
-        systemEnabled = false;
-        isCountingEnabled = 0;
-        LATAbits.LATA10 = 0;  // Turn off LED
-        printf("System Stopped\n");
-    }
-    else if (strncmp((const char*)uartBuffer, RESET_CMD, strlen(RESET_CMD)-2) == 0) {
-        pulseCount = 0;
-        count = 0;
-        printf("Counters Reset\n");
-    }
-    else if (strncmp((const char*)uartBuffer, SET_VOLTAGE_CMD, strlen(SET_VOLTAGE_CMD)) == 0) {
-        uint16_t voltage = atoi((const char*)&uartBuffer[strlen(SET_VOLTAGE_CMD)]);
-        if (voltage <= 4095) {  // 12-bit DAC
-            MCP4725_SetOutput(voltage);
-            printf("Voltage set to: %u\n", voltage);
-        } else {
-            printf("Invalid voltage value. Range: 0-4095\n");
-        }
-    }
-    else {
-        printf("Invalid command. Available commands:\n");
-        printf("START - Start the system\n");
-        printf("STOP - Stop the system\n");
-        printf("RESET - Reset pulse count\n");
-        printf("VOLTAGE=xxxx - Set voltage (0-4095)\n");
-    }
-}
-
-
 int main(void) {
-    // Initialize all peripherals
     init_oscillator();
     initRA10();
     I2C_Init();
@@ -527,38 +435,45 @@ int main(void) {
     InitMCP2200(0x04D8, 0x00DF);
     initInterrupt();
     init_uart();
-    ADC_Init();
+    ADC_Init();  
+    
 
-    // Initial DAC setting
-    MCP4725_SetOutput(HIGH_VOLTAGE_SETTING);
-
-    // Configure MCP2200
+//    MCP4725_SetOutput(HIGH_VOLTAGE_SETTING); 
     if (!ConfigureMCP2200(0x43, UART_BAUDRATE, BLINKFAST, BLINKSLOW, false, false, false)) {
         printf("MCP2200 configuration failed. Error: %d\n", LastError);
-        return 1;
+        return 1; 
     }
 
-    printf("System initialized. Send 'START' to begin...\n");
+    uint16_t adcValue = 0;
+
+    printf("System initialized and running...\n");
 
     while (1) {
-        if (systemEnabled) {
-            // Print count only if system is enabled
-            printf("%u\n", count);
-            ProcessCount();
-
-            // Read ADC value
-            uint16_t adcValue = ADC_Read();
-
-            // Process any received data or perform other tasks
-            fnRxLED(BLINKFAST);
-            fnTxLED(BLINKSLOW);
-
-            // Read port status
-            unsigned int portValue;
-            ReadPort(&portValue);
+        if (IFS3bits.SI2C2IF) {
+            // Trigger the I2C2 slave interrupt handler
+            _SI2C2Interrupt();
         }
+
+        // Read and process GM tube events
+        printf("%u\n", count);
+        ProcessCount();
+
+        // Read ADC value
+        adcValue = ADC_Read();
+        printf("ADC Converted Value: %u\n", adcValue);
+
+        // Process any received data or perform other tasks
+        fnRxLED(BLINKFAST);
+        fnTxLED(BLINKSLOW);
+        
+        // Read port status
+        unsigned int portValue;
+        ReadPort(&portValue);
+        printf("Port Value: 0x%X\n", portValue);
+
+        // Delay to control loop timing
         __delay_ms(1000);
     }
 
-    return 0;
+    return 0;  // This line will never be reached due to infinite loop
 }
