@@ -1,3 +1,5 @@
+
+// Configuration headers for system clock and peripherals
 #include <xc.h>
 #include <sys/attribs.h>
 #include <string.h>
