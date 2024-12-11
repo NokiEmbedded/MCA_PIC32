@@ -101,14 +101,14 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/newmainXC16.o: newmainXC16.c  .generated_files/flags/default/58a52e3c5c03bae6e255cb8132921827fd1a9109 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/newmainXC16.o: newmainXC16.c  .generated_files/flags/default/e592520443ed640474f18b9aef8b756a60bc483a .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/newmainXC16.o.d 
 	@${RM} ${OBJECTDIR}/newmainXC16.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -ffunction-sections -fdata-sections -O1 -fno-common -Werror -Wall -MP -MMD -MF "${OBJECTDIR}/newmainXC16.o.d" -o ${OBJECTDIR}/newmainXC16.o newmainXC16.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
 else
-${OBJECTDIR}/newmainXC16.o: newmainXC16.c  .generated_files/flags/default/13e1792639dfbcd776ff521609b829adc7e2de23 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+${OBJECTDIR}/newmainXC16.o: newmainXC16.c  .generated_files/flags/default/cf09730227325291362f60047570734800476fe5 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/newmainXC16.o.d 
 	@${RM} ${OBJECTDIR}/newmainXC16.o 
